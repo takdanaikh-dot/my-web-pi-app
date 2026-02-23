@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Braden Scale - Modern Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;600&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #fdfeff;
+            --soft-blue: #eef2ff;
+            --accent-blue: #4f46e5;
+            --text-dark: #1e293b;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+
+        header {
+            background: linear-gradient(135deg, #f5f7ff 0%, #c3dafe 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        header i { color: var(--accent-blue); margin-bottom: 15px; }
+        header h1 { font-family: 'Kanit'; font-size: 1.6rem; margin: 0; color: #1e3a8a; }
+        header p { color: #64748b; margin-top: 8px; font-weight: 300; }
+
+        .form-container { padding: 30px 20px; }
+
+        /* Card Style for Questions */
+        .q-card {
+            background: var(--primary-bg);
+            border: 1px solid #f1f5f9;
+            border-radius: var(--card-radius);
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .q-card:hover { border-color: #cbd5e1; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+
+        .q-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .q-header i { color: var(--accent-blue); background: #eff6ff; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+        .q-header span { font-weight: 600; font-family: 'Kanit'; color: #334155; }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            background: white;
+            font-size: 1rem;
+            font-family: 'Sarabun';
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 12px; margin-top: 25px; }
+        button {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Kanit';
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-analyze { background: var(--accent-blue); color: white; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+        .btn-reset { background: #f1f5f9; color: #64748b; }
+        button:hover { filter: brightness(1.1); }
+
+        /* Modern Visual Alert */
+        #result-section { display: none; margin-top: 30px; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .alert-box {
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .risk-badge { font-family: 'Kanit'; font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
+        
+        .care-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        /* Alert Colors - Soft & Professional */
+        .v-low { background-color: #fecaca; color: #991b1b; } /* High Risk */
+        .v-med { background-color: #fef08a; color: #854d0e; } /* Moderate */
+        .v-high { background-color: #dcfce7; color: #166534; } /* Safe */
+        .v-info { background-color: #dbeafe; color: #1e40af; } /* Mild */
+
+        @media (max-width: 500px) {
+            .btn-group { flex-direction: column; }
+            .btn-reset { order: 2; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <header>
+        <i class="fas fa-heartbeat fa-3x"></i>
+        <h1>Braden Scale Assessment</h1>
+        <p>ประเมินความเสี่ยงและแผนการดูแลแผลกดทับ</p>
+    </header>
+
+    <div class="form-container">
+        <form id="bradenForm">
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-user-check"></i><span>1. การรับความรู้สึก (Sensory)</span></div>
+                <select id="s1">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : ไม่ตอบสนองต่อความเจ็บปวด</option>
+                    <option value="2">2 : ตอบสนองต่อความเจ็บปวดเท่านั้น</option>
+                    <option value="3">3 : ตอบสนองต่อคำพูด แต่สื่อสารลำบาก</option>
+                    <option value="4">4 : ปกติ สื่อสารได้ดี</option>
+                </select>
+            </div>
+
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-cloud-rain"></i><span>2. ความเปียกชื้น (Moisture)</span></div>
+                <select id="s2">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : เปียกชื้นตลอดเวลา</option>
+                    <option value="2">2 : เปียกชื้นบ่อย</option>
+                    <option value="3">3 : เปียกชื้นบางครั้ง</option>
+                    <option value="4">4 : แห้งปกติ</option>
+                </select>
+            </div>
+
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-walking"></i><span>3. การทำกิจกรรม (Activity)</span></div>
+                <select id="s3">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : นอนบนเตียงตลอด</option>
+                    <option value="2">2 : นั่งบนเก้าอี้/รถเข็น</option>
+                    <option value="3">3 : เดินได้บ้างแต่จำกัด</option>
+                    <option value="4">4 : เดินได้ปกติ</option>
+                </select>
+            </div>
+
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-bed"></i><span>4. การเคลื่อนไหว (Mobility)</span></div>
+                <select id="s4">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : เคลื่อนไหวไม่ได้เลย</option>
+                    <option value="2">2 : ขยับได้เพียงเล็กน้อย</option>
+                    <option value="3">3 : ขยับร่างกายได้บ่อย</option>
+                    <option value="4">4 : ปกติ ขยับได้อิสระ</option>
+                </select>
+            </div>
+
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-utensils"></i><span>5. โภชนาการ (Nutrition)</span></div>
+                <select id="s5">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : แย่มาก (ทานน้อยมาก)</option>
+                    <option value="2">2 : พอใช้ (ทานได้บ้าง)</option>
+                    <option value="3">3 : ดี (ทานได้เกือบหมด)</option>
+                    <option value="4">4 : ดีเยี่ยม (ทานหมดทุกมื้อ)</option>
+                </select>
+            </div>
+
+            <div class="q-card">
+                <div class="q-header"><i class="fas fa-exchange-alt"></i><span>6. แรงเสียดทาน (Friction)</span></div>
+                <select id="s6">
+                    <option value="" disabled selected>กรุณาเลือกระดับ...</option>
+                    <option value="1">1 : มีปัญหามาก (ตัวไถลตลอด)</option>
+                    <option value="2">2 : มีปัญหาเล็กน้อย</option>
+                    <option value="3">3 : ไม่มีปัญหา</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn-reset" onclick="resetForm()"><i class="fas fa-redo"></i> Reset</button>
+                <button type="button" class="btn-analyze" onclick="processResult()"><i class="fas fa-stethoscope"></i> Analyze Results</button>
+            </div>
+        </form>
+
+        <div id="result-section">
+            <div id="alertBox" class="alert-box">
+                <div class="score-circle" id="totalScore">0</div>
+                <div class="risk-badge" id="riskLevel">ระดับความเสี่ยง</div>
+                
+                <div class="care-card">
+                    <strong style="font-family: 'Kanit'; font-size: 1.1rem; color: #1e293b;"><i class="fas fa-user-nurse"></i> แผนการพยาบาลแนะนำ:</strong>
+                    <ul id="planList" style="margin-top: 10px; padding-left: 20px; line-height: 1.8;"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function processResult() {
+        let score = 0;
+        let complete = true;
+        for(let i=1; i<=6; i++) {
+            let val = document.getElementById('s'+i).value;
+            if(!val) complete = false; else score += parseInt(val);
+        }
+
+        if(!complete) { alert("กรุณาเลือกข้อมูลให้ครบทุกหัวข้อครับ"); return; }
+
+        const resSec = document.getElementById('result-section');
+        const alertBox = document.getElementById('alertBox');
+        const scoreCircle = document.getElementById('totalScore');
+        const riskTxt = document.getElementById('riskLevel');
+        const planList = document.getElementById('planList');
+
+        resSec.style.display = 'block';
+        scoreCircle.innerText = score;
+        planList.innerHTML = "";
+
+        let cfg = {};
+        if(score <= 9) {
+            cfg = { color: 'v-low', label: 'เสี่ยงสูงมาก (Very High Risk)', plans: ["พลิกตัวทุก 1-2 ชม.", "ใช้ที่นอนลมไฟฟ้าแบบลอน", "ทาสารเคลือบผิวป้องกันความชื้น", "เสริมโปรตีนสูง"] };
+        } else if(score <= 12) {
+            cfg = { color: 'v-low', label: 'เสี่ยงสูง (High Risk)', plans: ["พลิกตัวทุก 2 ชม. เคร่งครัด", "ใช้อุปกรณ์ลดแรงกดทับปุ่มกระดูก", "ทำความสะอาดผิวหลังขับถ่ายทันที"] };
+        } else if(score <= 14) {
+            cfg = { color: 'v-med', label: 'เสี่ยงปานกลาง (Moderate Risk)', plans: ["พลิกตัวทุก 2-4 ชม.", "ยกหัวเตียงไม่เกิน 30 องศา", "ดูแลผ้าปูที่นอนให้เรียบตึง"] };
+        } else if(score <= 18) {
+            cfg = { color: 'v-info', label: 'เริ่มมีความเสี่ยง (Mild Risk)', plans: ["กระตุ้นการขยับร่างกาย", "ดูแลความสะอาดผิวหนังทั่วไป", "ประเมิน Braden Scale ทุกสัปดาห์"] };
+        } else {
+            cfg = { color: 'v-high', label: 'ความเสี่ยงต่ำ / ปกติ', plans: ["ดูแลสุขภาพทั่วไป", "สังเกตความเปลี่ยนแปลงประจำวัน"] };
+        }
+
+        alertBox.className = 'alert-box ' + cfg.color;
+        riskTxt.innerText = cfg.label;
+        cfg.plans.forEach(p => {
+            let li = document.createElement('li');
+            li.innerText = p;
+            planList.appendChild(li);
+        });
+
+        resSec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        document.getElementById('bradenForm').reset();
+        document.getElementById('result-section').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
